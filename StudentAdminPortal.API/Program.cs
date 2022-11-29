@@ -5,7 +5,16 @@ using StudentAdminPortal.API.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddCors((options) =>
+{
+    options.AddPolicy("angularApplication", (builder) =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .WithMethods("GET", "PUT", "POST", "DELETE")
+        .WithExposedHeaders("*");
+    });
+});
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StudentAdminContext>(options => 
     options.UseSqlServer(builder.Configuration.GetConnectionString("StudentAdminPortalDb")));
@@ -25,6 +34,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("angularApplication");
 
 app.UseAuthorization();
 
